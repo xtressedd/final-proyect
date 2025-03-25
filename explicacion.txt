@@ -1,14 +1,19 @@
-2. Explicación del Código y Comandos:
-Ahora, pasemos a explicarte qué hace cada parte del proyecto y los comandos que has utilizado.
+Explicación del Código y Comandos
 
-docker-compose.yml:
-Este archivo define cómo se ejecutarán tus contenedores. Está configurado para crear una red de contenedores que interactúan entre sí. Aquí está el desglose de cada servicio y su configuración.
+A continuación, detallo la estructura y configuración de los contenedores utilizados en mi proyecto, así como una explicación de cada componente definido en el archivo docker-compose.yml.
+
+docker-compose.yml
+
+Este archivo define cómo se ejecutarán los contenedores del proyecto, permitiendo crear una red en la que interactúan entre sí.
 
 version: '3'
-version: '3': Especifica que estamos usando la versión 3 de Docker Compose. Es importante porque esta versión define las reglas y sintaxis que usaremos.
-Servicios en docker-compose.yml:
-1. Servicio Suricata:
-yaml:
+
+Estoy utilizando la versión 3 de Docker Compose, que establece las reglas y la sintaxis para definir los servicios del proyecto.
+
+Servicios Definidos en docker-compose.yml
+
+1. Servicio Suricata
+
   suricata:
     image: jasonish/suricata:latest
     container_name: suricata
@@ -21,14 +26,21 @@ yaml:
       - ./suricata_logs:/var/log/suricata
     ports:
       - "8080:8080"
-image: jasonish/suricata:latest: Esta es la imagen de Docker que usará el contenedor. Está basada en Suricata, una herramienta de análisis de seguridad de red.
-container_name: suricata: Es el nombre que tendrá el contenedor. En este caso, se llamará suricata.
-networks: Esto indica en qué red se conectará el contenedor. Aquí está usando una red llamada monitoring_network.
-cap_add: Añade capacidades extra al contenedor. En este caso, NET_ADMIN y NET_RAW son necesarias para poder hacer análisis de tráfico de red.
-volumes: Esto mapea un directorio en tu máquina local a un directorio dentro del contenedor. En este caso, los logs de Suricata se guardarán en el directorio ./suricata_logs.
-ports: Expone el puerto 8080 de Suricata a tu máquina local. Puedes acceder a él desde http://localhost:8080.
-2. Servicio App (Python):
-yaml
+
+image: jasonish/suricata:latest: Utilizo esta imagen de Docker basada en Suricata, una herramienta de análisis de seguridad de red.
+
+container_name: suricata: El contenedor se llamará suricata.
+
+networks: Se conectará a la red interna monitoring_network.
+
+cap_add: Añadí permisos adicionales (NET_ADMIN y NET_RAW) para permitir el análisis de tráfico de red.
+
+volumes: Los logs de Suricata se almacenarán en ./suricata_logs.
+
+ports: Expongo el puerto 8080 para acceder al servicio.
+
+2. Servicio de la Aplicación (Python)
+
   app:
     image: python:3.9-slim
     container_name: app
@@ -40,16 +52,21 @@ yaml
     command: python3 app.py
     ports:
       - "5000:5000"
-image: python:3.9-slim: Usamos una imagen básica de Python 3.9. Es una versión más ligera de Python.
-container_name: app: Este es el nombre del contenedor para tu aplicación, que se llamará app.
-volumes: Montamos el directorio ./app en tu máquina local dentro del contenedor, de modo que cualquier archivo que pongas en ./app estará disponible dentro del contenedor.
-working_dir: /app: Define el directorio de trabajo dentro del contenedor.
-command: python3 app.py: Indica que el contenedor debe ejecutar el script app.py de Python.
-ports: Mapea el puerto 5000 de tu máquina local al contenedor. Tu aplicación será accesible desde http://localhost:5000.
-3. Servicio Elasticsearch:
-yaml
-Copy
-Edit
+
+image: python:3.9-slim: Uso una imagen ligera de Python 3.9 para la aplicación.
+
+container_name: app: El contenedor de la aplicación se llama app.
+
+volumes: Monté el directorio ./app dentro del contenedor.
+
+working_dir: /app: Establecí /app como el directorio de trabajo.
+
+command: python3 app.py: El contenedor ejecutará app.py.
+
+ports: Expuse el puerto 5000 para acceder a la aplicación.
+
+3. Servicio Elasticsearch
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     container_name: elasticsearch
@@ -59,13 +76,15 @@ Edit
       - discovery.type=single-node
     ports:
       - "9200:9200"
-image: Usamos la imagen oficial de Elasticsearch.
-environment: La variable discovery.type=single-node se usa para decirle a Elasticsearch que está en modo de un solo nodo, lo cual es suficiente para un entorno de pruebas.
-ports: Mapea el puerto 9200 de Elasticsearch a tu máquina local.
-4. Servicio Kibana:
-yaml
-Copy
-Edit
+
+image: Uso la imagen oficial de Elasticsearch.
+
+environment: Configuré discovery.type=single-node para un entorno de pruebas.
+
+ports: Expuse el puerto 9200 para Elasticsearch.
+
+4. Servicio Kibana
+
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.0
     container_name: kibana
@@ -75,14 +94,19 @@ Edit
       - ELASTICSEARCH_URL=http://elasticsearch:9200
     ports:
       - "5601:5601"
-image: Usamos la imagen oficial de Kibana.
-environment: La variable ELASTICSEARCH_URL le dice a Kibana dónde encontrar Elasticsearch (en este caso, en el contenedor llamado elasticsearch y en el puerto 9200).
-ports: Mapea el puerto 5601 de Kibana a tu máquina local. Puedes acceder a Kibana desde http://localhost:5601.
-Redes:
-yaml
-Copy
-Edit
+
+image: Uso la imagen oficial de Kibana.
+
+environment: Configuré ELASTICSEARCH_URL para que Kibana pueda comunicarse con Elasticsearch.
+
+ports: Expuse el puerto 5601 para la interfaz web de Kibana.
+
+Redes Utilizadas
+
 networks:
   monitoring_network:
     driver: bridge
-monitoring_network: Esta sección define una red de contenedores llamada monitoring_network que permite que todos los servicios (Suricata, app, Elasticsearch, Kibana) se comuniquen entre sí.
+
+monitoring_network: Definí esta red para permitir la comunicación entre los contenedores Suricata, la aplicación, Elasticsearch y Kibana.
+
+Con esta configuración, logré integrar herramientas de análisis de tráfico de red y visualización de datos de seguridad dentro de un entorno Dockerizado.
