@@ -1,61 +1,67 @@
-# PROYECTO FINAL
+### 🧠 Resumen del Proyecto HoneyPot Avanzado
+### 🎯 Objetivo:
+Capturar y analizar intentos de intrusión en un honeypot, impedir que el atacante borre logs, bloquear automáticamente la IP atacante, analizar el ataque y notificar por correo electrónico con nivel de riesgo.
 
-# Descripción
+### 🧱 Arquitectura del Proyecto
+- **Honeypot (Suricata o Cowrie)** 
 
-  Este repositorio contiene la primera entrega de mi Proyecto de Fin de Grado, enfocado en la implementación de un entorno seguro utilizando herramientas como Docker, Suricata, Zeek, Python,     IPTables y otras soluciones para la detección y prevención de amenazas.
+*Simula servicios vulnerables*
 
-# Estructura del Repositorio:
+ *Captura tráfico de red sospechoso*
 
-  📂 src/        # Código fuente del proyecto
-  
-  📂 docs/       # Documentación del proyecto
-  
-  📂 configs/    # Archivos de configuración (Docker, Suricata, etc.)
+ *Guarda logs de forma segura*
 
-  
-  📂 scripts/    # Scripts útiles para automatización y despliegue
+- **Protección de logs**
 
-  
-  📄 README.md   # Descripción general del proyecto
+*Logs almacenados con permisos estrictos*
 
-  
-  📄 .gitignore  # Archivos a excluir del repositorio
+*Posiblemente logs en tiempo real a servidor externo o sistema SIEM*
 
-  
-  📄 LICENSE     # Licencia del proyecto
+- **Sistema de detección (IDS)**
 
-  
+Suricata con reglas personalizadas
 
-# Instalación y Uso
+Detección de patrones y alertas
 
-Requisitos
+- **Firewall (UFW/IPTables)**
 
-  - Docker
-  - Docker Compose
-  - Python 3.9+
-  - Git
-  
+Script automático para bloquear IPs que atacan
 
-# Pasos de Instalación
+- **Consulta de base externa**
 
-1. Clonar el repositorio:
-   git clone <URL_DEL_REPO>
-   cd <NOMBRE_DEL_REPOSITORIO>
+(Simulado o real) API que clasifique la herramienta del atacante y devuelva un riesgo
 
-2. Construir y levantar los contenedores:
-   docker-compose up --build
+- **Sistema de notificación**
 
-3. Acceder a los servicios:
-    - Kibana: http://localhost:5601
-    - Elasticsearch: http://localhost:9200
-    - Suricata y Zeek: Integración en progreso
-   
-   
-# Contribución
+Envío de correo con ssmtp o mailx
 
-  Si deseas contribuir a este proyecto, abre un issue o un pull request con mejoras o sugerencias.
+Incluye: herramienta usada, IP, nivel de riesgo
 
-# Licencia
+### 🔧 Tecnologías usadas
+- **Docker**	-->        Aislamiento de servicios del honeypot
+- **Suricata**	  -->     Detección de intrusos (IDS)
+- **IPTables**	 -->      Bloqueo automático de IPs
+- **Python/Bash**  -->   Scripts de automatización
+- **Cron**	   -->        Automatización periódica si es necesario
+- **Mailx/ssmtp**	 -->    Notificaciones por correo
+- **Ubuntu**	   -->      Sistema base
+- **Git**	    -->        Control de versiones y entrega
 
-  Este proyecto está bajo la licencia MIT.
+
+### 📦 Fases del Proyecto
+ 1. Montar el honeypot con Suricata o Cowrie.
+ 2. Asegurar los logs (root-only, logs externos o chattr +i).
+ 3. Crear un script que lea logs y detecte IPs maliciosas.
+ 4. Bloquear automáticamente esas IPs.
+ 5. Simular o consultar base de datos de amenazas.
+ 6. Enviar un correo con la info del ataque.
+
+
+
+
+
+
+
+
+ Documentar absolutamente todo.
 
